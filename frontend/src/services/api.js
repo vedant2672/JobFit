@@ -49,7 +49,8 @@ export const resumeAPI = {
 export const analysisAPI = {
   create: (data) => api.post('/analysis', data),
   getHistory: () => api.get('/analysis/history'),
-  getById: (id) => api.get(`/analysis/${id}`)
+  getById: (id) => api.get(`/analysis/${id}`),
+  generateOutreach: (id) => api.post(`/analysis/${id}/outreach`)
 };
 
 export const profileAPI = {

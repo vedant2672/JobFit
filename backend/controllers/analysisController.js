@@ -1,6 +1,6 @@
 const Analysis = require('../models/Analysis');
 const Resume = require('../models/Resume');
-const { analyzeJobFit } = require('../services/openai');
+const { analyzeJobFit, generateOutreach } = require('../services/openai');
 
 const flattenToStrings = (arr) => {
   if (!Array.isArray(arr)) return [];
@@ -82,4 +82,40 @@ const getAnalysisById = async (req, res) => {
   }
 };
 
-module.exports = { createAnalysis, getAnalysisHistory, getAnalysisById };
+const generateOutreachMessages = async (req, res) => {
+  try {
+    const analysis = await Analysis.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
+
+    if (!analysis) {
+      return res.status(404).json({ message: 'Analysis not found' });
+    }
+
+    const resume = await Resume.findOne({ _id: analysis.resumeId, userId: req.user._id });
+    if (!resume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+
+    const outreach = await generateOutreach(
+      resume,
+      analysis.jobDescription,
+      analysis.jobTitle,
+      analysis.companyName,
+      {
+        jobFitScore: analysis.jobFitScore,
+        matchedSkills: analysis.matchedSkills,
+        missingSkills: analysis.missingSkills,
+        strengths: analysis.strengths
+      }
+    );
+
+    res.json(outreach);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: `Error generating outreach: ${error.message}` });
+  }
+};
+
+module.exports = { createAnalysis, getAnalysisHistory, getAnalysisById, generateOutreachMessages };

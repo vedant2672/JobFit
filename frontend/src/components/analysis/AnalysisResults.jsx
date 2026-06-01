@@ -2,6 +2,7 @@ import ScoreCircle from './ScoreCircle';
 import SkillsList from './SkillsList';
 import StrengthsWeaknesses from './StrengthsWeaknesses';
 import Roadmap from './Roadmap';
+import OutreachMessages from './OutreachMessages';
 
 const AnalysisResults = ({ analysis }) => {
   if (!analysis) {
@@ -54,6 +55,8 @@ const AnalysisResults = ({ analysis }) => {
       </div>
 
       <Roadmap roadmap={analysis.roadmap} />
+
+      <OutreachMessages analysisId={analysis._id} />
     </div>
   );
 };
