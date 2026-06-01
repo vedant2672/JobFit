@@ -86,9 +86,10 @@ Create a `.env` file in the backend directory:
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb+srv://your_username:your_password@cluster0.mongodb.net/jobfit?retryWrites=true&w=majority
+NODE_ENV=development
+MONGODB_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_jwt_secret_key
-OPENAI_API_KEY=sk-your-openai-api-key
+GROQ_API_KEY=your_groq_api_key
 ```
 
 ### 3. Frontend Setup

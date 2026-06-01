@@ -1,4 +1,3 @@
-const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const Resume = require('../models/Resume');
 const { extractResumeData } = require('../services/openai');
@@ -22,9 +21,7 @@ const uploadResume = async (req, res) => {
       return res.status(400).json({ message: 'Please upload a PDF file' });
     }
 
-    const filePath = req.file.path;
-    const dataBuffer = fs.readFileSync(filePath);
-    const pdfData = await pdfParse(dataBuffer);
+    const pdfData = await pdfParse(req.file.buffer);
     const extractedText = pdfData.text;
 
     const aiData = await extractResumeData(extractedText);
@@ -39,8 +36,6 @@ const uploadResume = async (req, res) => {
       experience: flattenToStrings(aiData.experience || [])
     });
 
-    fs.unlinkSync(filePath);
-
     res.status(201).json({
       _id: resume._id,
       fileName: resume.fileName,
@@ -51,9 +46,6 @@ const uploadResume = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
-    }
     res.status(500).json({ message: `Error processing resume: ${error.message}` });
   }
 };
